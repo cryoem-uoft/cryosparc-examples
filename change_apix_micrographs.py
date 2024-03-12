@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # run pip install cryosparc-tools if you haven't already
 from cryosparc.tools import CryoSPARC

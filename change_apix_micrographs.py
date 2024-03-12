@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import argparse
 import re
-from numpy import isclose
+import numpy as np
 
 proj_string_pattern = r"(P[0-9]+),(W[0-9]+),(J[0-9]+)"
 
@@ -65,7 +65,7 @@ def main(args):
     new_micrographs=new_job.load_output("micrographs")
 
     for param in parameters_to_update:
-        assert isclose(args.apix, new_micrographs[param])
+        assert np.all(np.isclose(args.apix, new_micrographs[param]))
 
     print(f'Updated pixel size in {updated_apix_job_name} is {args.apix}')
 

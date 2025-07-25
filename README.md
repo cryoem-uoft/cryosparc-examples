@@ -11,6 +11,8 @@ These packages are mostly used for plotting, so if you do not wish to install th
 
 Once dependencies are installed, you can run notebooks (`*.ipynb`) using your [Jupyter Notebook](https://jupyter.org/) environment of choice.
 You can run python scripts (`*.py`) directly in the terminal in the usual way (`path/to/script.py` or `python path/to/script.py`).
+If you click a notebook in GitHub it will open so that you can see the result of each cell.
+Python scripts do not have this feature, but are contained in their own directory with a README explaining the script's usage.
 
 ## 💻 Where can I run these scripts from?
 The scripts and notebooks do *not* need to be run on the master node --- they simply need to have access to the following ports:

@@ -1,3 +1,6 @@
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16578989.svg)](https://doi.org/10.5281/zenodo.16578989)
+
 # cryosparc-examples
 Example scripts, notebooks, and code snippets that are helpful for CryoSPARC users!
 

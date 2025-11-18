@@ -72,6 +72,7 @@ def main(args):
         import shutil
 
         shutil.make_archive(str(outdir), "zip", str(outdir))
+        print(f"Zip file for download: {outdir.absolute()}.zip")
 
 
 parser = argparse.ArgumentParser()

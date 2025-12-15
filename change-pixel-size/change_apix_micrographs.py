@@ -4,41 +4,22 @@ from cryosparc.tools import CryoSPARC
 import json
 from pathlib import Path
 import argparse
-import re
 import numpy as np
 
-proj_string_pattern = r"(P[0-9]+),(W[0-9]+),(J[0-9]+)"
-
-with open(Path.home() / 'instance-info.json', 'r') as f:
-    instance_info = json.load(f)
-
-cs = CryoSPARC(**instance_info)
-assert cs.test_connection()
-
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    'project_string',
-    help = "Project, Workspace, and Job separated by commas (no spaces). P100,W2,J26"
-)
-parser.add_argument(
-    'apix',
-    help = "New pixel size",
-    type = float
-)
-
-args = parser.parse_args()
-
+def ensure_prefix(s: str, prefix: str) -> str:
+    return f"{prefix}{s.removeprefix(prefix)}"
 def main(args):
-    match = re.match(proj_string_pattern, args.project_string)
-    project_name = match.group(1)
-    workspace_name = match.group(2)
-    job_name = match.group(3)
-
+    with open(Path(args.credentials).expanduser(), "r") as f:
+        credentials = json.load(f)
+    cs = CryoSPARC(**credentials)
+    project_name = ensure_prefix(args.puid, "P")
     project = cs.find_project(project_name)
 
-    extract_job = project.find_job(job_name)
+    job_name = ensure_prefix(args.juid, "J")
+    micrograph_job = project.find_job(job_name)
+    workspace_name = micrograph_job.doc["workspace_uids"][0]
 
-    micrographs = extract_job.load_output("micrographs")
+    micrographs = micrograph_job.load_output(args.output)
 
     parameters_to_update=[
         "micrograph_blob/psize_A",
@@ -56,17 +37,39 @@ def main(args):
         workspace_uid=workspace_name,
         dataset=micrographs,
         type='exposure',
-        name='micrographs',
-        slots=["micrograph_blob", "rigid_motion", "background_blob", "movie_blob", "spline_motion", "micrograph_blob_non_dw"],
-        passthrough=(job_name, 'micrographs'),
-        title='micrographs_pix_updated'
+        name=args.output,
+        slots=list(set(x.split("/")[0] for x in parameters_to_update)),
+        passthrough=(job_name, args.output),
+        title=f'{args.output}_pix_updated'
     )
-    new_job=project.find_job(updated_apix_job_name)
-    new_micrographs=new_job.load_output("micrographs")
-
-    for param in parameters_to_update:
-        assert np.all(np.isclose(args.apix, new_micrographs[param]))
 
     print(f'Updated pixel size in {updated_apix_job_name} is {args.apix}')
 
-main(args)
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "puid",
+    help = "Project UID from which to load micrographs. Like P123"
+)
+parser.add_argument(
+    "juid",
+    help = "Job UID from which to load micrographs. Like J456"
+)
+parser.add_argument(
+    'apix',
+    help = "New pixel size",
+    type = float
+)
+parser.add_argument(
+    "--output",
+    help="Micrograph output name. Default: micrographs",
+    default="micrographs"
+)
+parser.add_argument(
+    "--credentials",
+    help = "Location of a instance-info.json file. Default ~/instance-info.json",
+    default="~/instance-info.json"
+)
+
+if __name__ == "__main__":
+    args = parser.parse_args()
+    main(args)

@@ -20,5 +20,5 @@ This script changes all of the pixel size fields of a set of micrographs.
 
 Example usage:
 ```
-change_apix_micrographs.py P123,W2,J456 1.008
+change_apix_micrographs.py P123 J456 1.008 --output exposures
 ```

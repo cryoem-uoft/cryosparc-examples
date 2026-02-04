@@ -1,6 +1,9 @@
 # Adjust subparticle defocus
 
 > [!NOTE]
+> This script requires CryoSPARC v5.0 or later
+
+> [!NOTE]
 > This script is the result of extended conversation in [this forum thread](https://discuss.cryosparc.com/t/adjust-per-particle-defocus-of-subparticles-in-volume-alignment-tools/14718).
 > Please visit that link for more information on the problem being solved here.
 

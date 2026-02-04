@@ -88,7 +88,7 @@ def main(args):
         recenter_vector_a = get_param_center(vat_job, apix)
     except TypeError:
         recenter_vector_a = get_mask_center(vat_job, apix, cs, puid)
-    recenter_vector_a -= map_size_a
+    recenter_vector_a -= map_size_a / 2
 
     # cs poses rotate particles' frames into volume's frame, we want to rotate
     # the volume's frame into particles'

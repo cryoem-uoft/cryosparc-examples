@@ -37,18 +37,14 @@ def get_param_center(
     recenter_match = re.match(recenter_pattern, job.params.recenter_shift)
     if recenter_match is None:
         raise ValueError("Center parameter was set but could not be parsed")
-    try:
-        x, y, z, units = recenter_match.groups()
-    except ValueError:
-        x, y, z = recenter_match.groups()
+    x, y, z, units = recenter_match.groups()
+    if units is None:
         units = "px"
-
-    x, y, z = (float(d) for d in (x, y, z))
+    center = np.array(list(float(d) for d in (x, y, z)))
     if units.lower() == "px":
-        for d in [x, y, z]:
-            d = d * apix
+        center = center * apix
 
-    return np.array([x, y, z])
+    return center
 
 
 def get_mask_center(

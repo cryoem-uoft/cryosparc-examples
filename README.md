@@ -38,7 +38,8 @@ ssh -N -L 39000:localhost:39000 -L 39002:localhost:39002 -L 39003:localhost:3900
 with `<< master host >>` replaced by the hostname for the CryoSPARC master nodes will set up ssh tunnels for each of the (default) required ports, so that setting `host` to `localhost` will be sufficient to run the script.
 
 ## 🤔 What is `instance-info.json`?
-To prove that you're an authorized user of your CryoSPARC installation, any CryoSPARC Tools script you run needs your username and password.
+CryoSPARC Tools scripts must prove that you are an authenticated user of the CryoSPARC instance.
+Prior to CryoSPARC v5, your username and password were required.
 This is just the email and password you use to access the normal CryoSPARC GUI; you do not need to be an administrator or have special access to the installation.
 The scripts also need to know the hostname and base port for the CryoSPARC installation.
 We find it convenient to store all of this information in a JSON file in the user's home directory, called `instance-info.json`.
@@ -55,5 +56,23 @@ This file has the following content (including the opening and closing `{}`):
 ```
 
 with the relevant information replacing all text surrounded by and including `<< >>`.
+
+Starting with CryoSPARC v5, authentication tokens are used instead.
+CryoSPARC Tools proves you are an authenticated user once, and then sends this proof (a token) for future uses of the script.
+You authenticate by running `python -m cryosparc.tools login`.
+Whenever you create a `CryoSPARC()` object in a python script, CryoSPARC Tools checks whether you have an active token for the specified
+host.
+If you do, the script proceeds.
+If you do not, the script will error out and tell you to perform the login process to re-authenticate.
+
+For backwards compatibility with your v4 scripts, you can create v5 `instance-info.json` files like so:
+
+```{json}
+{
+        "base_url": "<< the full URL you use to access cryosparc, like http://localhost:39000 >>",
+        "email": "<< the email you use to log into the CryoSPARC GUI >>"
+}
+```
+
 If you prefer, you can instead manually enter this information into the `cs = CryoSPARC()` lines at the beginning of the script.
 More information on creating and authenticating the `CryoSPARC` object can be found [here](https://tools.cryosparc.com/intro.html#usage).
